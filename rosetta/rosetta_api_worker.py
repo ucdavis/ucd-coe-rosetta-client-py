@@ -91,9 +91,19 @@ class RosettaAPIWorker:
         return b_token_status
 
 
+    def parse_rosetta_person_json(self,person) -> RosettaPerson:
+        #Initialize Person to Return
+        rosetta_person = RosettaPerson()
+
+        rosetta_person.displayname = "Deannnnn"
+
+
+        return rosetta_person
+
+
     def get_people_by_search_term(self,search_by: PeopleSearchBy, search_term: str) -> list[RosettaPerson]:
         #Var for Returned People List
-        people = []
+        people: list[RosettaPerson] = []
 
         #Var for Search Result Limit
         n_srch_rslt_limit = 100
@@ -104,7 +114,7 @@ class RosettaAPIWorker:
         #Var for Retrieve More Search Results
         b_retr_more_srch_rslts = True
 
-        while True:
+        while b_retr_more_srch_rslts == True:
             if self.check_oauth_token():
                 #Var for Header of People EndPoint Call
                 headerEPCall = {"Authorization":"Bearer " + self.oath_token}
@@ -112,10 +122,41 @@ class RosettaAPIWorker:
                 #Var for URI
                 peopleUri = self.base_url + "people?" + search_by + "=" + search_term + "&offset=" + str(n_srch_rslt_offset) + "&limit=" + str(n_srch_rslt_limit) + "&count=true"
 
-                print(peopleUri)
-            
-            if b_retr_more_srch_rslts == True:
-                break
+                #Call to People Endpoint
+                responsePeople = requests.get(peopleUri,headers=headerEPCall)
+
+                #Check Returned Status Code
+                if responsePeople.status_code == 200:
+
+                    #Pull X-Total-Count and X-Response-Count Values
+                    nTotalCnt: int | None = int(responsePeople.headers.get("x-total-count"))
+                    nRspnCnt: int | None = int(responsePeople.headers.get("x-response-count"))
+
+                    #Check Total and Reponse Counts are Not Empty
+                    if nTotalCnt is not None and nTotalCnt > 0 and nRspnCnt is not None and nRspnCnt > 0:
+                        #Var for Response Data
+                        responseData = responsePeople.json()
+
+                        for person in responseData:
+                            parsed_person = self.parse_rosetta_person_json(person)
+                            people.append(parsed_person)
+
+                        #Increment Offset
+                        n_srch_rslt_offset += n_srch_rslt_limit
+
+                        #Check Offset to Total Count
+                        if n_srch_rslt_offset >= nTotalCnt:
+                            b_retr_more_srch_rslts = False
+
+                    else:
+                        b_retr_more_srch_rslts = False
+
+                else:
+                    b_retr_more_srch_rslts = False
+
+            else:
+                b_retr_more_srch_rslts = False
+                
 
         return people
 
