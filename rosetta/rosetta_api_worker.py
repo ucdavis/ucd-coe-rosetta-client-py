@@ -151,7 +151,183 @@ class RosettaAPIWorker:
             if jn_names.get("lived_pronouns") is not None:
                 rosetta_person.lived_pronouns = jn_names["lived_pronouns"]
 
-            
+        #Retrieve Email Addresses
+        if person.get("email") is not None:
+
+            #Retrieve Email Node
+            jn_email = person["email"]
+
+            #Retrieve Campus Email Address
+            if jn_email.get("campus") is not None:
+                rosetta_person.email_address_campus = jn_email["campus"]
+
+            #Retrieve Health System Email Address
+            if jn_email.get("health") is not None:
+                rosetta_person.email_address_health = jn_email["health"]
+
+
+        #Retrieve Provisioning Status
+        if person.get("provisioning_status") is not None:
+
+            #Retrieve Provisioning Status Node
+            jn_provisioning_status = person["provisioning_status"]
+
+            #Retrieve Primary Provisioning Status
+            if jn_provisioning_status.get("primary") is not None:
+                rosetta_person.provisioning_status_primary = jn_provisioning_status["primary"]
+
+            #Retrieve Employee Provisioning Status
+            if jn_provisioning_status.get("employee") is not None:
+                rosetta_person.provisioning_status_employee = jn_provisioning_status["employee"]
+
+            #Retrieve Faculty Provisioning Status
+            if jn_provisioning_status.get("faculty") is not None:
+                rosetta_person.provisioning_status_faculty = jn_provisioning_status["faculty"]
+
+            #Retrieve Student Provisioning Status
+            if jn_provisioning_status.get("student") is not None:
+                rosetta_person.provisioning_status_student = jn_provisioning_status["student"]
+
+
+        #Retrieve Affiliations
+        if person.get("affiliation") is not None:
+
+            #Retrieve Affiliation Node
+            jn_affiliation = person["affiliation"]
+
+            #Retrieve Employee Affiliation
+            if jn_affiliation.get("employee") is not None:
+                if jn_affiliation["employee"].upper() == "Y":
+                    rosetta_person.affiliation_employee = True
+                else:
+                    rosetta_person.affiliation_employee = False
+
+            #Retrieve Faculty Affiliation
+            if jn_affiliation.get("faculty") is not None:
+                if jn_affiliation["faculty"].upper() == "Y":
+                    rosetta_person.affiliation_faculty = True
+                else:
+                    rosetta_person.affiliation_faculty = False
+
+            #Retrieve Temporary Affiliation
+            if jn_affiliation.get("temporary_affiliate") is not None:
+                if jn_affiliation["temporary_affiliate"].upper() == "Y":
+                    rosetta_person.affiliation_temporary_affiliate = True
+                else:
+                    rosetta_person.affiliation_temporary_affiliate = False
+
+            #Retrieve Student Affiliation
+            if jn_affiliation.get("student") is not None:
+                if jn_affiliation["student"].upper() == "Y":
+                    rosetta_person.affiliation_student = True
+                else:
+                    rosetta_person.affiliation_student = False
+
+            #Retrieve Student Applicant Affiliation
+            if jn_affiliation.get("student_applicant") is not None:
+                if jn_affiliation["student_applicant"].upper() == "Y":
+                    rosetta_person.affiliation_student_applicant = True
+                else:
+                    rosetta_person.affiliation_student_applicant = False
+
+            #Retrieve Health Affiliation
+            if jn_affiliation.get("health_affiliate") is not None:
+                if jn_affiliation["health_affiliate"].upper() == "Y":
+                    rosetta_person.affiliation_health_affiliate = True
+                else:
+                    rosetta_person.affiliation_health_affiliate = False
+
+
+        #Retrieve Employment Status
+        if person.get("employment_status") is not None:
+
+            #Retrieve Employment Statuses
+            jn_employment_status = person["employment_status"]
+
+            #Retrieve Academic Status
+            if jn_employment_status.get("is_academic") is not None:
+                if jn_employment_status["is_academic"].upper() == "Y":
+                    rosetta_person.employment_is_academic = True
+                else:
+                    rosetta_person.employment_is_academic = False
+
+            #Retrieve Academic Senate Status
+            if jn_employment_status.get("is_academic_senate") is not None:
+                if jn_employment_status["is_academic_senate"].upper() == "Y":
+                    rosetta_person.employment_is_academic_senate = True
+                else:
+                    rosetta_person.employment_is_academic_senate = False
+
+            #Retrieve Academic Federation Status
+            if jn_employment_status.get("is_academic_federation") is not None:
+                if jn_employment_status["is_academic_federation"].upper() == "Y":
+                    rosetta_person.employment_is_academic_federation = True
+                else:
+                    rosetta_person.employment_is_academic_federation = False
+
+            #Retrieve Faculty Status
+            if jn_employment_status.get("is_faculty") is not None:
+                if jn_employment_status["is_faculty"].upper() == "Y":
+                    rosetta_person.employment_is_faculty = True
+                else:
+                    rosetta_person.employment_is_faculty = False
+
+            #Retrieve Teaching Faculty Status
+            if jn_employment_status.get("is_teaching_faculty") is not None:
+                if jn_employment_status["is_teaching_faculty"].upper() == "Y":
+                    rosetta_person.employment_is_teaching_faculty = True
+                else:
+                    rosetta_person.employment_is_teaching_faculty = False
+
+            #Retrieve Ladder Rank Status
+            if jn_employment_status.get("is_ladder_rank") is not None:
+                if jn_employment_status["is_ladder_rank"].upper() == "Y":
+                    rosetta_person.employment_is_ladder_rank = True
+                else:
+                    rosetta_person.employment_is_ladder_rank = False
+
+            #Retrieve Without Salary Status
+            if jn_employment_status.get("is_without_salary") is not None:
+                if jn_employment_status["is_without_salary"].upper() == "Y":
+                    rosetta_person.employment_is_without_salary = True
+                else:
+                    rosetta_person.employment_is_without_salary = False
+
+            #Retrieve MSP Status
+            if jn_employment_status.get("is_msp") is not None:
+                if jn_employment_status["is_msp"].upper() == "Y":
+                    rosetta_person.employment_is_msp = True
+                else:
+                    rosetta_person.employment_is_msp = False
+
+            #Retrieve SSP Status
+            if jn_employment_status.get("is_ssp") is not None:
+                if jn_employment_status["is_ssp"].upper() == "Y":
+                    rosetta_person.employment_is_ssp = True
+                else:
+                    rosetta_person.employment_is_ssp = False
+
+            #Retrieve Manager Status
+            if jn_employment_status.get("is_manager") is not None:
+                if jn_employment_status["is_manager"].upper() == "Y":
+                    rosetta_person.employment_is_manager = True
+                else:
+                    rosetta_person.employment_is_manager = False
+
+            #Retrieve Campus Employee Status
+            if jn_employment_status.get("is_campus_employee") is not None:
+                if jn_employment_status["is_campus_employee"].upper() == "Y":
+                    rosetta_person.employment_is_campus_employee = True
+                else:
+                    rosetta_person.employment_is_campus_employee = False
+
+            #Retrieve Health Employee Status
+            if jn_employment_status.get("is_health_employee") is not None:
+                if jn_employment_status["is_health_employee"].upper() == "Y":
+                    rosetta_person.employment_is_health_employee = True
+                else:
+                    rosetta_person.employment_is_health_employee = False
+
 
         return rosetta_person
 
