@@ -95,8 +95,63 @@ class RosettaAPIWorker:
         #Initialize Person to Return
         rosetta_person = RosettaPerson()
 
-        rosetta_person.displayname = "Deannnnn"
+        #Retrieve Display Name
+        if person.get("displayname") is not None:
+            rosetta_person.display_name = person["displayname"]
 
+        #Retrieve IAM ID
+        if person.get("iam_id") is not None:
+            rosetta_person.iam_id = person["iam_id"]
+        
+        #Retrieve IDs
+        if person.get("id") is not None:
+            #Pull ID Node
+            jn_ids = person["id"]
+
+            #Retrieve IAM ID
+            if jn_ids.get("iam_id") is not None:
+                rosetta_person.iam_id = jn_ids["iam_id"]
+
+            #Retrieve Login ID
+            if jn_ids.get("login_id") is not None:
+                rosetta_person.login_id = jn_ids["login_id"]
+
+            #Retrieve Mothra ID
+            if jn_ids.get("mothra_id") is not None:
+                rosetta_person.mothra_id = jn_ids["mothra_id"]
+
+            #Retrieve Employee ID
+            if jn_ids.get("employee_id") is not None:
+                rosetta_person.employee_id = jn_ids["employee_id"]
+
+            if jn_ids.get("mail_id") is not None:
+                #Pull Mail ID Node
+                jn_ids_mail = jn_ids["mail_id"]
+
+                if jn_ids_mail.get("campus") is not None:
+                    rosetta_person.mail_id_campus = jn_ids_mail["campus"]
+
+                if jn_ids_mail.get("health") is not None:
+                    rosetta_person.mail_id_health = jn_ids_mail["health"]
+
+        #Retrieve Names Node
+        if person.get("name") is not None:
+            #Pull Name Node
+            jn_names = person["name"]
+
+            #Retrieve Lived First Name
+            if jn_names.get("lived_first_name") is not None:
+                rosetta_person.lived_first_name = jn_names["lived_first_name"]
+
+            #Retrieve Lived Last Name
+            if jn_names.get("lived_last_name") is not None:
+                rosetta_person.lived_last_name = jn_names["lived_last_name"]
+
+            #Retrieve Lived Pronouns
+            if jn_names.get("lived_pronouns") is not None:
+                rosetta_person.lived_pronouns = jn_names["lived_pronouns"]
+
+            
 
         return rosetta_person
 
