@@ -89,6 +89,154 @@ class RosettaAPIWorker:
                 
 
         return b_token_status
+    
+
+    def parse_rosetta_employee_assoc_json(self,empassoc) -> RosettaEmployeeAssociation:
+        #Initialize Employee Association to Return
+        rosetta_emp_assoc = RosettaEmployeeAssociation()
+
+        #Retrieve IAM ID
+        if empassoc.get("iam_id") is not None:
+            rosetta_emp_assoc.iam_id = empassoc["iam_id"]
+
+        #Retrieve Reports to IAM ID
+        if empassoc.get("reports_to_iam_id") is not None:
+            rosetta_emp_assoc.reports_to_iam_id = empassoc["reports_to_iam_id"]
+
+        #Retrieve Reports to Employee ID
+        if empassoc.get("reports_to_employee_id") is not None:
+            rosetta_emp_assoc.reports_to_employee_id = empassoc["reports_to_employee_id"]
+
+        #Retrieve Employee ID
+        if empassoc.get("employee_id") is not None:
+            rosetta_emp_assoc.employee_id = empassoc["employee_id"]
+
+        #Retrieve Employee Record
+        if empassoc.get("employee_record") is not None:
+            rosetta_emp_assoc.employee_record = empassoc["employee_record"]
+
+        #Retrieve Position Number
+        if empassoc.get("position_number") is not None:
+            rosetta_emp_assoc.position_number = empassoc["position_number"]
+
+        #Retrieve Position Title
+        if empassoc.get("position_title") is not None:
+            rosetta_emp_assoc.position_title = empassoc["position_title"]
+
+        #Retrieve Job Indicator
+        if empassoc.get("job_indicator") is not None:
+            rosetta_emp_assoc.job_indicator = empassoc["job_indicator"]
+
+        #Retrieve Relationship to Organization
+        if empassoc.get("relationship_to_organization") is not None:
+            rosetta_emp_assoc.relationship_to_organization = empassoc["relationship_to_organization"]
+
+        #Retrieve Employee Classification
+        if empassoc.get("employee_classification") is not None:
+            rosetta_emp_assoc.employee_classification = empassoc["employee_classification"]
+
+        #Retrieve Employee Classification Description
+        if empassoc.get("employee_classification_description") is not None:
+            rosetta_emp_assoc.employee_classification_description = empassoc["employee_classification_description"]
+
+        #Retrieve Status
+        if empassoc.get("status") is not None:
+            rosetta_emp_assoc.status = empassoc["status"]
+
+        #Retrieve Hire Date
+        if empassoc.get("hire_date") is not None:
+            rosetta_emp_assoc.hire_date = empassoc["hire_date"]
+
+        #Retrieve Start Date
+        if empassoc.get("start_date") is not None:
+            rosetta_emp_assoc.start_date = empassoc["start_date"]
+
+        #Retrieve FTE Percentage
+        if empassoc.get("fte_percentage") is not None:
+            rosetta_emp_assoc.fte_percentage = empassoc["fte_percentage"]
+
+        #Retrieve Reports to Position
+        if empassoc.get("reports_to_position") is not None:
+            rosetta_emp_assoc.reports_to_position = empassoc["reports_to_position"]
+
+        #Retrieve Job Type ID
+        if empassoc.get("job_type_id") is not None:
+            rosetta_emp_assoc.job_type_id = empassoc["job_type_id"]
+
+        #Retrieve Job Type Description
+        if empassoc.get("job_type_description") is not None:
+            rosetta_emp_assoc.job_type_description = empassoc["job_type_description"]
+
+        #Retrieve Organization ID
+        if empassoc.get("organization_id") is not None:
+            rosetta_emp_assoc.organization_id = empassoc["organization_id"]
+
+        #Retrieve Organization Title
+        if empassoc.get("organization_title") is not None:
+            rosetta_emp_assoc.organization_title = empassoc["organization_title"]
+
+        #Retrieve Division ID
+        if empassoc.get("division_id") is not None:
+            rosetta_emp_assoc.division_id = empassoc["division_id"]
+
+        #Retrieve Division Title
+        if empassoc.get("division_title") is not None:
+            rosetta_emp_assoc.division_title = empassoc["division_title"]
+
+        #Retrieve Subdivision ID
+        if empassoc.get("subdivision_id") is not None:
+            rosetta_emp_assoc.subdivision_id = empassoc["subdivision_id"]
+
+        #Retrieve Subdivision Title
+        if empassoc.get("subdivision_title") is not None:
+            rosetta_emp_assoc.subdivision_title = empassoc["subdivision_title"]
+
+        #Retrieve Subdivision L4 ID
+        if empassoc.get("subdivision_l4_id") is not None:
+            rosetta_emp_assoc.subdivision_l4_id = empassoc["subdivision_l4_id"]
+
+        #Retrieve Subdivision L4 Title
+        if empassoc.get("subdivision_l4_title") is not None:
+            rosetta_emp_assoc.subdivision_l4_title = empassoc["subdivision_l4_title"]
+
+        #Retrieve Business Unit ID
+        if empassoc.get("business_unit_id") is not None:
+            rosetta_emp_assoc.business_unit_id = empassoc["business_unit_id"]
+
+        #Retrieve Business Unit Title
+        if empassoc.get("business_unit_title") is not None:
+            rosetta_emp_assoc.business_unit_title = empassoc["business_unit_title"]
+
+        #Retrieve Department ID
+        if empassoc.get("department_id") is not None:
+            rosetta_emp_assoc.department_id = empassoc["department_id"]
+
+        #Retrieve Department Title
+        if empassoc.get("department_title") is not None:
+            rosetta_emp_assoc.department_title = empassoc["department_title"]
+
+        #Retrieve Department Short Title
+        if empassoc.get("department_short_title") is not None:
+            rosetta_emp_assoc.department_short_title = empassoc["department_short_title"]
+
+        #Retrieve Is Health Position
+        if empassoc.get("is_health_position") is not None:
+            rosetta_emp_assoc.is_health_position = empassoc["is_health_position"]
+
+        #Retrieve Is Campus Position
+        if empassoc.get("is_campus_position") is not None:
+            rosetta_emp_assoc.is_campus_position = empassoc["is_campus_position"]
+
+        #Retrieve Modified Date
+        if empassoc.get("modified_date") is not None:
+            rosetta_emp_assoc.modified_date = empassoc["modified_date"]
+
+        #Retrieve Create Date
+        if empassoc.get("create_date") is not None:
+            rosetta_emp_assoc.create_date = empassoc["create_date"]
+
+
+        return rosetta_emp_assoc
 
 
     def parse_rosetta_person_json(self,person) -> RosettaPerson:
