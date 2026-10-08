@@ -594,7 +594,71 @@ class RosettaAPIWorker:
 
 
         return rosetta_person
-    
+
+
+    def get_student_associations_by_search_term(self,search_by: StudentSearchBy, search_term: str) -> list[RosettaStudentAssociation]:
+
+        #Var for Returned Student Association List
+        student_assocs: list[RosettaStudentAssociation] = []
+
+        #Var for Search Result Limit
+        n_srch_rslt_limit = 200
+                
+        #Var for Search Result Offset
+        n_srch_rslt_offset = 0
+                
+        #Var for Retrieve More Search Results
+        b_retr_more_srch_rslts = True
+        
+        while b_retr_more_srch_rslts == True:
+        
+            if self.check_oauth_token():
+                #Var for Header of Employee Association EndPoint Call
+                headerEPCall = {"Authorization":"Bearer " + self.oath_token}
+                
+                #Var for URI
+                studentUri = self.base_url + "student-association?" + search_by + "=" + search_term + "&offset=" + str(n_srch_rslt_offset) + "&limit=" + str(n_srch_rslt_limit) + "&count=true"
+                
+                #Call to Student Association Endpoint
+                responseStdntAssoc = requests.get(studentUri,headers=headerEPCall)
+                
+                #Check Returned Status Code
+                if responseStdntAssoc.status_code == 200:
+                
+                    #Pull X-Total-Count and X-Response-Count Values
+                    nTotalCnt: int | None = int(responseStdntAssoc.headers.get("x-total-count"))
+                    nRspnCnt: int | None = int(responseStdntAssoc.headers.get("x-response-count"))
+                
+                    #Check Total and Reponse Counts are Not Empty
+                    if nTotalCnt is not None and nTotalCnt > 0 and nRspnCnt is not None and nRspnCnt > 0:
+                                
+                        #Var for Response Data
+                        responseData = responseStdntAssoc.json()
+
+                        #Go Through Response Data and Parse It Out
+                        for stdnt_assc in responseData:
+                            parsed_stdnt_assc = self.parse_rosetta_student_assoc_json(stdnt_assc)
+                            student_assocs.append(parsed_stdnt_assc)
+        
+                
+                        #Increment Offset
+                        n_srch_rslt_offset += n_srch_rslt_limit
+                
+                        #Check Offset to Total Count
+                        if n_srch_rslt_offset >= nTotalCnt:
+                            b_retr_more_srch_rslts = False
+                
+                    else:
+                        b_retr_more_srch_rslts = False
+                
+                else:
+                    b_retr_more_srch_rslts = False
+                
+            else:
+                b_retr_more_srch_rslts = False
+
+
+        return student_assocs
 
     def get_employee_associations_by_search_term(self,search_by: EmployeeSearchBy, search_term: str) -> list[RosettaEmployeeAssociation]:
         
