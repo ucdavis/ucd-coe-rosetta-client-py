@@ -32,6 +32,7 @@ class RosettaAPIWorker:
 
     class PeopleSearchBy(StrEnum):
         IAMID = "iamid"
+        IAMIDS = "iamids"
         LOGINID = "loginid"
         EMAIL = "email"
         EMPLOYEEID = "employeeid"
@@ -89,6 +90,57 @@ class RosettaAPIWorker:
                 
 
         return b_token_status
+
+    def parse_rosetta_student_assoc_json(self,stdntassoc) -> RosettaStudentAssociation:
+
+        #Initialize Student Association to Return
+        rosetta_stdnt_assoc = RosettaStudentAssociation()
+
+        #Retrieve IAM ID
+        if stdntassoc.get("iam_id") is not None:
+            rosetta_stdnt_assoc.iam_id = stdntassoc["iam_id"]
+
+        #Retrieve Student ID
+        if stdntassoc.get("student_id") is not None:
+            rosetta_stdnt_assoc.student_id = stdntassoc["student_id"]
+
+        #Retrieve PIDM 
+        if stdntassoc.get("pidm") is not None:
+            rosetta_stdnt_assoc.pidm = stdntassoc["pidm"]
+
+        #Retrieve College Code
+        if stdntassoc.get("college_code") is not None:
+            rosetta_stdnt_assoc.college_code = stdntassoc["college_code"]
+
+        #Retrieve College Title
+        if stdntassoc.get("college_title") is not None:
+            rosetta_stdnt_assoc.college_title = stdntassoc["college_title"]
+
+        #Retrieve Major Code
+        if stdntassoc.get("major_code") is not None:
+            rosetta_stdnt_assoc.major_code = stdntassoc["major_code"]
+
+        #Retrieve Major Title 
+        if stdntassoc.get("major_title") is not None:
+            rosetta_stdnt_assoc.major_title = stdntassoc["major_title"]
+
+        #Retrieve Academic Level
+        if stdntassoc.get("academic_level") is not None:
+            rosetta_stdnt_assoc.academic_level = stdntassoc["academic_level"]
+
+        #Retrieve Level Affiliation Code
+        if stdntassoc.get("lvl_affiliation_code") is not None:
+            rosetta_stdnt_assoc.academic_level = stdntassoc["lvl_affiliation_code"]
+
+        #Retrieve Class Level
+        if stdntassoc.get("class_level") is not None:
+            rosetta_stdnt_assoc.class_level = stdntassoc["class_level"]
+
+        #Retrieve Class Affiliation Code
+        if stdntassoc.get("cls_affiliation_code") is not None:
+            rosetta_stdnt_assoc.class_level = stdntassoc["cls_affiliation_code"]
+
+        return rosetta_stdnt_assoc
     
 
     def parse_rosetta_employee_assoc_json(self,empassoc) -> RosettaEmployeeAssociation:
@@ -272,6 +324,27 @@ class RosettaAPIWorker:
             if jn_ids.get("employee_id") is not None:
                 rosetta_person.employee_id = jn_ids["employee_id"]
 
+            #Retrieve Student ID
+            if jn_ids.get("student_id") is not None:
+                rosetta_person.student_id = jn_ids["student_id"]
+
+            #Retrieve PIDM
+            if jn_ids.get("pidm") is not None:
+                rosetta_person.pidm = jn_ids["pidm"]
+
+            #Retrieve UCNet ID
+            if jn_ids.get("ucnet_id") is not None:
+                rosetta_person.ucnet_id = jn_ids["ucnet_id"]
+
+            #Retrieve CPE ID
+            if jn_ids.get("cpe_id") is not None:
+                rosetta_person.cpe_id = jn_ids["cpe_id"]
+
+            #Retrieve Affiliate ID
+            if jn_ids.get("affiliate_id") is not None:
+                rosetta_person.affiliate_id = jn_ids["affiliate_id"]
+            
+            #Retrieve Mail IDs
             if jn_ids.get("mail_id") is not None:
                 #Pull Mail ID Node
                 jn_ids_mail = jn_ids["mail_id"]
@@ -335,6 +408,18 @@ class RosettaAPIWorker:
             #Retrieve Student Provisioning Status
             if jn_provisioning_status.get("student") is not None:
                 rosetta_person.provisioning_status_student = jn_provisioning_status["student"]
+
+            #Retrieve Student Applicant Provisioning Status
+            if jn_provisioning_status.get("student_applicant") is not None:
+                rosetta_person.provisioning_status_student_applicant = jn_provisioning_status["student_applicant"]
+
+            #Retrieve CPE Affiliate Provisioning Status
+            if jn_provisioning_status.get("cpe_affiliate") is not None:
+                rosetta_person.provisioning_status_cpe_affiliate = jn_provisioning_status["cpe_affiliate"]
+
+            #Retrieve Temporary Affiliate Provisioning Status
+            if jn_provisioning_status.get("temporary_affiliate") is not None:
+                rosetta_person.provisioning_status_temporary_affiliate = jn_provisioning_status["temporary_affiliate"]
 
 
         #Retrieve Affiliations
@@ -476,16 +561,111 @@ class RosettaAPIWorker:
                 else:
                     rosetta_person.employment_is_health_employee = False
 
+        
+        #Check for Employee Associations to Parse
+        if person.get("employee_association") is not None:
+            for employee_assoc in person["employee_association"]:
+                
+                #Parse Json Data for Employee Association
+                parsed_emp_assoc = self.parse_rosetta_employee_assoc_json(employee_assoc)
+
+                #Fill in IAM ID for People Payroll Associations
+                if rosetta_person.iam_id is not None:
+                    parsed_emp_assoc.iam_id = rosetta_person.iam_id
+
+                #Add Employee Association to Member
+                rosetta_person.employee_associations.append(parsed_emp_assoc)
+
+        #Check for Student Associations to Parse
+        if person.get("student_association") is not None:
+            for student_assoc in person["student_association"]:
+                
+                #Parse Json Data for Student Association
+                parsed_stdnt_assoc = self.parse_rosetta_student_assoc_json(student_assoc)
+
+                #Fill in IAM ID,Student ID, and PIDM for People Student Associations
+                if rosetta_person.iam_id is not None:
+                    parsed_stdnt_assoc.iam_id = rosetta_person.iam_id
+                    parsed_stdnt_assoc.student_id = rosetta_person.student_id
+                    parsed_stdnt_assoc.pidm = rosetta_person.pidm
+
+                #Add Student Association to Member
+                rosetta_person.student_associations.append(parsed_stdnt_assoc)
+
 
         return rosetta_person
+    
 
+    def get_employee_associations_by_search_term(self,search_by: EmployeeSearchBy, search_term: str) -> list[RosettaEmployeeAssociation]:
+        
+        #Var for Returned Employee Association List
+        employee_assocs: list[RosettaEmployeeAssociation] = []
 
+        #Var for Search Result Limit
+        n_srch_rslt_limit = 200
+        
+        #Var for Search Result Offset
+        n_srch_rslt_offset = 0
+        
+        #Var for Retrieve More Search Results
+        b_retr_more_srch_rslts = True
+
+        while b_retr_more_srch_rslts == True:
+
+            if self.check_oauth_token():
+                #Var for Header of Employee Association EndPoint Call
+                headerEPCall = {"Authorization":"Bearer " + self.oath_token}
+        
+                #Var for URI
+                employeeUri = self.base_url + "employee-association?" + search_by + "=" + search_term + "&offset=" + str(n_srch_rslt_offset) + "&limit=" + str(n_srch_rslt_limit) + "&count=true"
+        
+                #Call to Employee Association Endpoint
+                responseEmpAssoc = requests.get(employeeUri,headers=headerEPCall)
+        
+                #Check Returned Status Code
+                if responseEmpAssoc.status_code == 200:
+        
+                    #Pull X-Total-Count and X-Response-Count Values
+                    nTotalCnt: int | None = int(responseEmpAssoc.headers.get("x-total-count"))
+                    nRspnCnt: int | None = int(responseEmpAssoc.headers.get("x-response-count"))
+        
+                    #Check Total and Reponse Counts are Not Empty
+                    if nTotalCnt is not None and nTotalCnt > 0 and nRspnCnt is not None and nRspnCnt > 0:
+                        
+                        #Var for Response Data
+                        responseData = responseEmpAssoc.json()
+        
+                        for emp_assc in responseData:
+                            parsed_emp_assc = self.parse_rosetta_employee_assoc_json(emp_assc)
+                            employee_assocs.append(parsed_emp_assc)
+
+        
+                        #Increment Offset
+                        n_srch_rslt_offset += n_srch_rslt_limit
+        
+                        #Check Offset to Total Count
+                        if n_srch_rslt_offset >= nTotalCnt:
+                            b_retr_more_srch_rslts = False
+        
+                    else:
+                        b_retr_more_srch_rslts = False
+        
+                else:
+                    b_retr_more_srch_rslts = False
+        
+            else:
+                b_retr_more_srch_rslts = False
+
+                        
+        return employee_assocs
+
+    
     def get_people_by_search_term(self,search_by: PeopleSearchBy, search_term: str) -> list[RosettaPerson]:
         #Var for Returned People List
         people: list[RosettaPerson] = []
 
         #Var for Search Result Limit
-        n_srch_rslt_limit = 100
+        n_srch_rslt_limit = 200
 
         #Var for Search Result Offset
         n_srch_rslt_offset = 0
