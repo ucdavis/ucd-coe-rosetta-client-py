@@ -2,7 +2,6 @@
 from dotenv import load_dotenv
 import os
 from datetime import datetime, timedelta
-from pprint import pprint
 
 #Import Rosetta Classes
 from rosetta import RosettaAPIWorker, RosettaPerson, RosettaEmployeeAssociation, RosettaStudentAssociation
@@ -19,7 +18,6 @@ def main():
                                         os.getenv("ROSETTA_CLIENT_ID"),
                                         os.getenv("ROSETTA_CLIENT_SECRET"))
 
-
     ############################
     # People Get EndPoint Query
     ############################
@@ -34,66 +32,72 @@ def main():
 
     #Display People API Query Results
     for upeep in sorted(lpeople, key=lambda x: x.display_name):
-        #Print Separator for Readability
-        print("\n=============== " + upeep.display_name  + " ===============\n")
+        rosetta_api_wrkr.display_rosetta_person_info(upeep)
 
-        #Print Rosetta Person Basic Properties
-        for property_name, value in upeep.__dict__.items():
-            if property_name != "employee_associations" and property_name != "student_associations":
-                print(f"{property_name}: {value}")
 
-        print(" ")
-
-        #Print Employee Associations If Any
-        if upeep.employee_associations is not None:
-            for empassoc in upeep.employee_associations:
-                for property_name, value in empassoc.__dict__.items():
-                    print(f"{property_name}: {value}")
-
-                print(" ")
-                
-        #Print Student Associations If Any
-        if upeep.student_associations is not None:
-            for stdntassoc in upeep.student_associations:
-                for property_name, value in stdntassoc.__dict__.items():
-                    print(f"{property_name}: {value}")
-
-                print(" ")
-
+    ###################################################
+    #Set for Unique IDs for Post People Lookup
+    s_mpl_ids = set()
+    ###################################################
 
     #######################################
     # Employee Associations Endpoint Query
     #######################################
 
-    # #Pull Rosetta Employee Associations by Search Term
-    # l_employee_assocs: list[RosettaEmployeeAssociation] = rosetta_api_wrkr.get_employee_associations_by_search_term(rosetta_api_wrkr.EmployeeSearchBy.DEPARTMENTID,"024000")
+    #Pull Rosetta Employee Associations by Search Term
+    l_employee_assocs: list[RosettaEmployeeAssociation] = rosetta_api_wrkr.get_employee_associations_by_search_term(rosetta_api_wrkr.EmployeeSearchBy.DEPARTMENTID,"024000")
 
-    # #Display Employee Associations API Query Results
-    # for uemp_assoc in l_employee_assocs:
+    #Display Employee Associations API Query Results
+    for uemp_assoc in l_employee_assocs:
 
-    #     #Print Separator for Readability
-    #     print("\n=============== " + uemp_assoc.iam_id  + " ===============\n")
+        #Add Employee's IAM to IAM IDs Set for People Post Lookup 
+        s_mpl_ids.add(uemp_assoc.iam_id)
 
-    #     #Print Rosetta Employee Association Properties
-    #     for property_name, value in uemp_assoc.__dict__.items():
-    #         print(f"{property_name}: {value}")
+        #Display Employee Association Info
+        rosetta_api_wrkr.display_rosetta_employee_association_info(uemp_assoc)
+
+        
+    #For Readability
+    print(" ")
 
     #######################################
     # Student Associations Endpoint Query
     #######################################
 
-    # #Pull Rosetta Student Associations by Search Term
-    # l_student_assocs: list[RosettaStudentAssociation] = rosetta_api_wrkr.get_student_associations_by_search_term(rosetta_api_wrkr.StudentSearchBy.MAJORCODE,"GBIM")
+    #Pull Rosetta Student Associations by Search Term
+    l_student_assocs: list[RosettaStudentAssociation] = rosetta_api_wrkr.get_student_associations_by_search_term(rosetta_api_wrkr.StudentSearchBy.MAJORCODE,"GBIM")
 
-    # #Display Student Associations API Query Results
-    # for ustdnt_assoc in l_student_assocs:
+    #Display Student Associations API Query Results
+    for ustdnt_assoc in l_student_assocs:
 
-    #     #Print Separator for Readability
-    #     print("\n=============== " + ustdnt_assoc.iam_id  + " ===============\n")
+        #Add Student's IAM to IAM IDs Set for People Post Lookup 
+        s_mpl_ids.add(ustdnt_assoc.iam_id)
 
-    #     #Print Rosetta Student Association Properties
-    #     for property_name, value in ustdnt_assoc.__dict__.items():
-    #         print(f"{property_name}: {value}")
+        #Display Student Association Info
+        rosetta_api_wrkr.display_rosetta_student_association_info(ustdnt_assoc)
+
+
+    #For Readability
+    print(" ")
+
+
+    #######################################
+    # People Lookup by Post Query
+    #######################################
+    
+    #Check MPL IDs Set Count
+    if len(s_mpl_ids) > 0:
+
+        #Pull List of Rosetta People by Post Lookup
+        l_people: list[RosettaPerson] = rosetta_api_wrkr.post_mass_people_lookup(rosetta_api_wrkr.PeoplePostLookupBy.IAMIDS,s_mpl_ids)
+
+        #Sort List by Display Name
+        l_people.sort(key=lambda x: x.display_name)
+
+        #Display Returned UCD People
+        for ucd_peep in l_people:
+            rosetta_api_wrkr.display_rosetta_person_info(ucd_peep)
+
 
     #For Readability
     print(" ")

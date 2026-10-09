@@ -57,6 +57,15 @@ class RosettaAPIWorker:
         MAJORCODE = "majorcode"
         COLLEGECODE = "collegecode"
 
+    class PeoplePostLookupBy(StrEnum):
+        IAMIDS = "iamids"
+        EMAILS = "emails"
+        LOGINIDS = "loginids"
+        EMPLOYEEIDS = "employeeids"
+        STUDENTIDS = "studentids"
+        PIDMS = "pidms"
+        MOTHRAIDS = "mothraids"
+
 
     def check_oauth_token(self) -> bool:
         #Var for Return Status
@@ -786,3 +795,81 @@ class RosettaAPIWorker:
         return people
 
 
+    def post_mass_people_lookup(self,lookup_by: PeoplePostLookupBy,setMPL: set) -> list[RosettaPerson]:
+
+        #Var for Returned People List
+        people: list[RosettaPerson] = []
+
+        #Var for Mass People Lookup Data
+        mpl_data = {}
+
+        #Dynamically Add Properties
+        mpl_data["limit"] = 0
+        mpl_data[lookup_by] = []
+
+        #Load MPL Lookup ID Array
+        for mpl_id in setMPL:
+            mpl_data[lookup_by].append(mpl_id)
+
+        #Set Limit (Adding Extra Just in Case)
+        mpl_data["limit"] = len(mpl_data[lookup_by]) + 10
+
+        if self.check_oauth_token():
+
+            #Var for Header of People EndPoint Call
+            headerEPCall = {"Authorization":"Bearer " + self.oath_token}
+
+            #Var for URI
+            peopleUri = self.base_url + "people"
+
+            #Make Post API Call
+            responsePeople = requests.post(peopleUri,json=mpl_data,headers=headerEPCall)
+        
+            #Check Returned Status Code
+            if responsePeople.status_code == 200:
+
+                #Var for Response Data
+                responseData = responsePeople.json()
+                
+                for person in responseData:
+                    parsed_person = self.parse_rosetta_person_json(person)
+                    people.append(parsed_person)
+
+
+        return people
+
+
+    def display_rosetta_person_info(self,rosetta_peep: RosettaPerson):
+
+        #Print Display Name Banner
+        print("\n=============== " + rosetta_peep.display_name  + " ===============\n")
+
+        #Print Rosetta Person Basic Properties
+        for property_name, value in rosetta_peep.__dict__.items():
+            if property_name != "employee_associations" and property_name != "student_associations":
+                print(f"{property_name}: {value}")
+
+        print(" ")
+
+        #Print Employee Associations If Any
+        if rosetta_peep.employee_associations is not None:
+            for emp_ssoc in rosetta_peep.employee_associations:
+                self.display_rosetta_employee_association_info(emp_ssoc)
+                
+        #Print Student Associations If Any
+        if rosetta_peep.student_associations is not None:
+            for stdnt_assoc in rosetta_peep.student_associations:
+                self.display_rosetta_student_association_info(stdnt_assoc)
+                
+
+    def display_rosetta_employee_association_info(self,empl_assoc: RosettaEmployeeAssociation):
+        for property_name, value in empl_assoc.__dict__.items():
+            print(f"{property_name}: {value}")
+
+        print(" ")
+
+    def display_rosetta_student_association_info(self,stdnt_assoc: RosettaStudentAssociation):
+        for property_name, value in stdnt_assoc.__dict__.items():
+                    print(f"{property_name}: {value}")
+
+        print(" ")
