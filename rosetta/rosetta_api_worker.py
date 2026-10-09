@@ -33,7 +33,9 @@ class RosettaAPIWorker:
     class PeopleSearchBy(StrEnum):
         IAMID = "iamid"
         IAMIDS = "iamids"
+        IAMIDSALLSTATE = "affiliationState=all&iamids"
         LOGINID = "loginid"
+        LOGINIDALLSTATE = "affiliationState=all&loginid"
         EMAIL = "email"
         EMPLOYEEID = "employeeid"
         STUDENTID = "studentid"

@@ -25,11 +25,12 @@ def main():
     ############################
 
     #Pull People by Search Term
-    lpeople: list[RosettaPerson] = rosetta_api_wrkr.get_people_by_search_term(rosetta_api_wrkr.PeopleSearchBy.IAMIDS,"1000505549,1000213158,1000572411,1000632980")
+    lpeople: list[RosettaPerson] = rosetta_api_wrkr.get_people_by_search_term(rosetta_api_wrkr.PeopleSearchBy.IAMIDS,"1000550201,1000016201,1000438403,1000227051")
 
-    # "1000550201,1000138242,1000007148,1000227051"
+    # "1000550201,1000016201,1000438403,1000227051"
     # "1000010578,1000438054,1000269748,1000004984"
     # "1000505549,1000213158,1000572411,1000632980"
+    # "1000090068,1000054150,1000008378,1000326424"
 
     #Display People API Query Results
     for upeep in sorted(lpeople, key=lambda x: x.display_name):
@@ -64,35 +65,35 @@ def main():
     # Employee Associations Endpoint Query
     #######################################
 
-    #Pull Rosetta Employee Associations by Search Term
-    l_employee_assocs: list[RosettaEmployeeAssociation] = rosetta_api_wrkr.get_employee_associations_by_search_term(rosetta_api_wrkr.EmployeeSearchBy.DEPARTMENTID,"024000")
+    # #Pull Rosetta Employee Associations by Search Term
+    # l_employee_assocs: list[RosettaEmployeeAssociation] = rosetta_api_wrkr.get_employee_associations_by_search_term(rosetta_api_wrkr.EmployeeSearchBy.DEPARTMENTID,"024000")
 
-    #Display Employee Associations API Query Results
-    for uemp_assoc in l_employee_assocs:
+    # #Display Employee Associations API Query Results
+    # for uemp_assoc in l_employee_assocs:
 
-        #Print Separator for Readability
-        print("\n=============== " + uemp_assoc.iam_id  + " ===============\n")
+    #     #Print Separator for Readability
+    #     print("\n=============== " + uemp_assoc.iam_id  + " ===============\n")
 
-        #Print Rosetta Employee Association Properties
-        for property_name, value in uemp_assoc.__dict__.items():
-            print(f"{property_name}: {value}")
+    #     #Print Rosetta Employee Association Properties
+    #     for property_name, value in uemp_assoc.__dict__.items():
+    #         print(f"{property_name}: {value}")
 
     #######################################
     # Student Associations Endpoint Query
     #######################################
 
-    #Pull Rosetta Student Associations by Search Term
-    l_student_assocs: list[RosettaStudentAssociation] = rosetta_api_wrkr.get_student_associations_by_search_term(rosetta_api_wrkr.StudentSearchBy.MAJORCODE,"GBIM")
+    # #Pull Rosetta Student Associations by Search Term
+    # l_student_assocs: list[RosettaStudentAssociation] = rosetta_api_wrkr.get_student_associations_by_search_term(rosetta_api_wrkr.StudentSearchBy.MAJORCODE,"GBIM")
 
-    #Display Student Associations API Query Results
-    for ustdnt_assoc in l_student_assocs:
+    # #Display Student Associations API Query Results
+    # for ustdnt_assoc in l_student_assocs:
 
-        #Print Separator for Readability
-        print("\n=============== " + ustdnt_assoc.iam_id  + " ===============\n")
+    #     #Print Separator for Readability
+    #     print("\n=============== " + ustdnt_assoc.iam_id  + " ===============\n")
 
-        #Print Rosetta Student Association Properties
-        for property_name, value in ustdnt_assoc.__dict__.items():
-            print(f"{property_name}: {value}")
+    #     #Print Rosetta Student Association Properties
+    #     for property_name, value in ustdnt_assoc.__dict__.items():
+    #         print(f"{property_name}: {value}")
 
     #For Readability
     print(" ")
