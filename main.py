@@ -50,7 +50,7 @@ def main():
     #Display Employee Associations API Query Results
     for uemp_assoc in l_employee_assocs:
 
-        #Add Employee's IAM to IAM IDs Set for People Post Lookup 
+        #Add Employee's IAM to MPL IDs Set for People Post Lookup 
         s_mpl_ids.add(uemp_assoc.iam_id)
 
         #Display Employee Association Info
@@ -70,7 +70,7 @@ def main():
     #Display Student Associations API Query Results
     for ustdnt_assoc in l_student_assocs:
 
-        #Add Student's IAM to IAM IDs Set for People Post Lookup 
+        #Add Student's IAM to MPL IDs Set for People Post Lookup 
         s_mpl_ids.add(ustdnt_assoc.iam_id)
 
         #Display Student Association Info
