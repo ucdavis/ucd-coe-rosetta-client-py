@@ -2,3 +2,5 @@ from .rosetta_api_worker import RosettaAPIWorker
 from .rosetta_person import RosettaPerson
 from .rosetta_employee_association import RosettaEmployeeAssociation
 from .rosetta_student_association import RosettaStudentAssociation
+from .rosetta_department import RosettaDepartment
+from .rosetta_job_type_id import RosettaJobTypeID

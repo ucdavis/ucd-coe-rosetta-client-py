@@ -7,6 +7,8 @@ from enum import StrEnum
 from .rosetta_person import RosettaPerson
 from .rosetta_employee_association import RosettaEmployeeAssociation
 from .rosetta_student_association import RosettaStudentAssociation
+from .rosetta_department import RosettaDepartment
+from .rosetta_job_type_id import RosettaJobTypeID
 
 class RosettaAPIWorker:
     def __init__(self,base_url: str,token_url: str,client_id: str,client_secret: str):
@@ -67,6 +69,10 @@ class RosettaAPIWorker:
         MOTHRAIDS = "mothraids"
 
 
+    ############################################
+    # Rosetta API Call Functions
+    ############################################
+    
     def check_oauth_token(self) -> bool:
         #Var for Return Status
         b_token_status = True
@@ -89,7 +95,7 @@ class RosettaAPIWorker:
 
                 #Var for Response Json Data
                 responseData = responseTokenInfo.json()
-                  
+                    
                 if(len(responseData['access_token']) > 0):
                     self.oath_token = responseData['access_token']
                     self.expires_in = datetime.now() + timedelta(seconds=responseData['expires_in'])
@@ -101,6 +107,273 @@ class RosettaAPIWorker:
                 
 
         return b_token_status
+
+
+    def get_departments(self) -> list[RosettaDepartment]:
+
+        #Var for Returned Department List
+        departments: list[RosettaDepartment] = []
+
+        if self.check_oauth_token():
+        
+            #Var for Header for EndPoint Call
+            headerEPCall = {"Authorization":"Bearer " + self.oath_token}
+        
+            #Var for URI
+            departmentsUri = self.base_url + "employee-association/departments"
+        
+            #Make Get API Call
+            responseDepartments = requests.get(departmentsUri,headers=headerEPCall)
+                
+            #Check Returned Status Code
+            if responseDepartments.status_code == 200:
+        
+                #Var for Response Data
+                responseData = responseDepartments.json()
+                        
+                # for person in responseData:
+                #     parsed_person = self.parse_rosetta_person_json(person)
+                #     people.append(parsed_person)
+
+
+        return departments
+    
+
+    def get_student_associations_by_search_term(self,search_by: StudentSearchBy, search_term: str) -> list[RosettaStudentAssociation]:
+
+        #Var for Returned Student Association List
+        student_assocs: list[RosettaStudentAssociation] = []
+
+        #Var for Search Result Limit
+        n_srch_rslt_limit = 200
+                
+        #Var for Search Result Offset
+        n_srch_rslt_offset = 0
+                
+        #Var for Retrieve More Search Results
+        b_retr_more_srch_rslts = True
+        
+        while b_retr_more_srch_rslts == True:
+        
+            if self.check_oauth_token():
+                #Var for Header of Student Association EndPoint Call
+                headerEPCall = {"Authorization":"Bearer " + self.oath_token}
+                
+                #Var for URI
+                studentUri = self.base_url + "student-association?" + search_by + "=" + search_term + "&offset=" + str(n_srch_rslt_offset) + "&limit=" + str(n_srch_rslt_limit) + "&count=true"
+                
+                #Call to Student Association Endpoint
+                responseStdntAssoc = requests.get(studentUri,headers=headerEPCall)
+                
+                #Check Returned Status Code
+                if responseStdntAssoc.status_code == 200:
+                
+                    #Pull X-Total-Count and X-Response-Count Values
+                    nTotalCnt: int | None = int(responseStdntAssoc.headers.get("x-total-count"))
+                    nRspnCnt: int | None = int(responseStdntAssoc.headers.get("x-response-count"))
+                
+                    #Check Total and Reponse Counts are Not Empty
+                    if nTotalCnt is not None and nTotalCnt > 0 and nRspnCnt is not None and nRspnCnt > 0:
+                                
+                        #Var for Response Data
+                        responseData = responseStdntAssoc.json()
+
+                        #Go Through Response Data and Parse It Out
+                        for stdnt_assc in responseData:
+                            parsed_stdnt_assc = self.parse_rosetta_student_assoc_json(stdnt_assc)
+                            student_assocs.append(parsed_stdnt_assc)
+        
+                
+                        #Increment Offset
+                        n_srch_rslt_offset += n_srch_rslt_limit
+                
+                        #Check Offset to Total Count
+                        if n_srch_rslt_offset >= nTotalCnt:
+                            b_retr_more_srch_rslts = False
+                
+                    else:
+                        b_retr_more_srch_rslts = False
+                
+                else:
+                    b_retr_more_srch_rslts = False
+                
+            else:
+                b_retr_more_srch_rslts = False
+
+
+        return student_assocs
+    
+
+    def get_employee_associations_by_search_term(self,search_by: EmployeeSearchBy, search_term: str) -> list[RosettaEmployeeAssociation]:
+        
+        #Var for Returned Employee Association List
+        employee_assocs: list[RosettaEmployeeAssociation] = []
+
+        #Var for Search Result Limit
+        n_srch_rslt_limit = 200
+        
+        #Var for Search Result Offset
+        n_srch_rslt_offset = 0
+        
+        #Var for Retrieve More Search Results
+        b_retr_more_srch_rslts = True
+
+        while b_retr_more_srch_rslts == True:
+
+            if self.check_oauth_token():
+                #Var for Header of Employee Association EndPoint Call
+                headerEPCall = {"Authorization":"Bearer " + self.oath_token}
+        
+                #Var for URI
+                employeeUri = self.base_url + "employee-association?" + search_by + "=" + search_term + "&offset=" + str(n_srch_rslt_offset) + "&limit=" + str(n_srch_rslt_limit) + "&count=true"
+        
+                #Call to Employee Association Endpoint
+                responseEmpAssoc = requests.get(employeeUri,headers=headerEPCall)
+        
+                #Check Returned Status Code
+                if responseEmpAssoc.status_code == 200:
+        
+                    #Pull X-Total-Count and X-Response-Count Values
+                    nTotalCnt: int | None = int(responseEmpAssoc.headers.get("x-total-count"))
+                    nRspnCnt: int | None = int(responseEmpAssoc.headers.get("x-response-count"))
+        
+                    #Check Total and Reponse Counts are Not Empty
+                    if nTotalCnt is not None and nTotalCnt > 0 and nRspnCnt is not None and nRspnCnt > 0:
+                        
+                        #Var for Response Data
+                        responseData = responseEmpAssoc.json()
+        
+                        for emp_assc in responseData:
+                            parsed_emp_assc = self.parse_rosetta_employee_assoc_json(emp_assc)
+                            employee_assocs.append(parsed_emp_assc)
+
+        
+                        #Increment Offset
+                        n_srch_rslt_offset += n_srch_rslt_limit
+        
+                        #Check Offset to Total Count
+                        if n_srch_rslt_offset >= nTotalCnt:
+                            b_retr_more_srch_rslts = False
+        
+                    else:
+                        b_retr_more_srch_rslts = False
+        
+                else:
+                    b_retr_more_srch_rslts = False
+        
+            else:
+                b_retr_more_srch_rslts = False
+
+                        
+        return employee_assocs
+
+    
+    def get_people_by_search_term(self,search_by: PeopleSearchBy, search_term: str) -> list[RosettaPerson]:
+        #Var for Returned People List
+        people: list[RosettaPerson] = []
+
+        #Var for Search Result Limit
+        n_srch_rslt_limit = 200
+
+        #Var for Search Result Offset
+        n_srch_rslt_offset = 0
+
+        #Var for Retrieve More Search Results
+        b_retr_more_srch_rslts = True
+
+        while b_retr_more_srch_rslts == True:
+            if self.check_oauth_token():
+                #Var for Header of People EndPoint Call
+                headerEPCall = {"Authorization":"Bearer " + self.oath_token}
+
+                #Var for URI
+                peopleUri = self.base_url + "people?" + search_by + "=" + search_term + "&offset=" + str(n_srch_rslt_offset) + "&limit=" + str(n_srch_rslt_limit) + "&count=true"
+
+                #Call to People Endpoint
+                responsePeople = requests.get(peopleUri,headers=headerEPCall)
+
+                #Check Returned Status Code
+                if responsePeople.status_code == 200:
+
+                    #Pull X-Total-Count and X-Response-Count Values
+                    nTotalCnt: int | None = int(responsePeople.headers.get("x-total-count"))
+                    nRspnCnt: int | None = int(responsePeople.headers.get("x-response-count"))
+
+                    #Check Total and Reponse Counts are Not Empty
+                    if nTotalCnt is not None and nTotalCnt > 0 and nRspnCnt is not None and nRspnCnt > 0:
+                        #Var for Response Data
+                        responseData = responsePeople.json()
+
+                        for person in responseData:
+                            parsed_person = self.parse_rosetta_person_json(person)
+                            people.append(parsed_person)
+
+                        #Increment Offset
+                        n_srch_rslt_offset += n_srch_rslt_limit
+
+                        #Check Offset to Total Count
+                        if n_srch_rslt_offset >= nTotalCnt:
+                            b_retr_more_srch_rslts = False
+
+                    else:
+                        b_retr_more_srch_rslts = False
+
+                else:
+                    b_retr_more_srch_rslts = False
+
+            else:
+                b_retr_more_srch_rslts = False
+                
+
+        return people
+
+
+    def post_mass_people_lookup(self,lookup_by: PeoplePostLookupBy,setMPL: set) -> list[RosettaPerson]:
+
+        #Var for Returned People List
+        people: list[RosettaPerson] = []
+
+        #Var for Mass People Lookup Data
+        mpl_data = {}
+
+        #Dynamically Add Properties
+        mpl_data["limit"] = 0
+        mpl_data[lookup_by] = []
+
+        #Load MPL Lookup ID Array
+        for mpl_id in setMPL:
+            mpl_data[lookup_by].append(mpl_id)
+
+        #Set Limit (Adding Extra Just in Case)
+        mpl_data["limit"] = len(mpl_data[lookup_by]) + 10
+
+        if self.check_oauth_token():
+
+            #Var for Header of People EndPoint Call
+            headerEPCall = {"Authorization":"Bearer " + self.oath_token}
+
+            #Var for URI
+            peopleUri = self.base_url + "people"
+
+            #Make Post API Call
+            responsePeople = requests.post(peopleUri,json=mpl_data,headers=headerEPCall)
+        
+            #Check Returned Status Code
+            if responsePeople.status_code == 200:
+
+                #Var for Response Data
+                responseData = responsePeople.json()
+                
+                for person in responseData:
+                    parsed_person = self.parse_rosetta_person_json(person)
+                    people.append(parsed_person)
+
+
+        return people
+
+    #################################
+    # Parsing Rosetta Json Functions
+    #################################
 
     def parse_rosetta_student_assoc_json(self,stdntassoc) -> RosettaStudentAssociation:
 
@@ -605,239 +878,11 @@ class RosettaAPIWorker:
 
 
         return rosetta_person
-
-
-    def get_student_associations_by_search_term(self,search_by: StudentSearchBy, search_term: str) -> list[RosettaStudentAssociation]:
-
-        #Var for Returned Student Association List
-        student_assocs: list[RosettaStudentAssociation] = []
-
-        #Var for Search Result Limit
-        n_srch_rslt_limit = 200
-                
-        #Var for Search Result Offset
-        n_srch_rslt_offset = 0
-                
-        #Var for Retrieve More Search Results
-        b_retr_more_srch_rslts = True
-        
-        while b_retr_more_srch_rslts == True:
-        
-            if self.check_oauth_token():
-                #Var for Header of Employee Association EndPoint Call
-                headerEPCall = {"Authorization":"Bearer " + self.oath_token}
-                
-                #Var for URI
-                studentUri = self.base_url + "student-association?" + search_by + "=" + search_term + "&offset=" + str(n_srch_rslt_offset) + "&limit=" + str(n_srch_rslt_limit) + "&count=true"
-                
-                #Call to Student Association Endpoint
-                responseStdntAssoc = requests.get(studentUri,headers=headerEPCall)
-                
-                #Check Returned Status Code
-                if responseStdntAssoc.status_code == 200:
-                
-                    #Pull X-Total-Count and X-Response-Count Values
-                    nTotalCnt: int | None = int(responseStdntAssoc.headers.get("x-total-count"))
-                    nRspnCnt: int | None = int(responseStdntAssoc.headers.get("x-response-count"))
-                
-                    #Check Total and Reponse Counts are Not Empty
-                    if nTotalCnt is not None and nTotalCnt > 0 and nRspnCnt is not None and nRspnCnt > 0:
-                                
-                        #Var for Response Data
-                        responseData = responseStdntAssoc.json()
-
-                        #Go Through Response Data and Parse It Out
-                        for stdnt_assc in responseData:
-                            parsed_stdnt_assc = self.parse_rosetta_student_assoc_json(stdnt_assc)
-                            student_assocs.append(parsed_stdnt_assc)
-        
-                
-                        #Increment Offset
-                        n_srch_rslt_offset += n_srch_rslt_limit
-                
-                        #Check Offset to Total Count
-                        if n_srch_rslt_offset >= nTotalCnt:
-                            b_retr_more_srch_rslts = False
-                
-                    else:
-                        b_retr_more_srch_rslts = False
-                
-                else:
-                    b_retr_more_srch_rslts = False
-                
-            else:
-                b_retr_more_srch_rslts = False
-
-
-        return student_assocs
-
-    def get_employee_associations_by_search_term(self,search_by: EmployeeSearchBy, search_term: str) -> list[RosettaEmployeeAssociation]:
-        
-        #Var for Returned Employee Association List
-        employee_assocs: list[RosettaEmployeeAssociation] = []
-
-        #Var for Search Result Limit
-        n_srch_rslt_limit = 200
-        
-        #Var for Search Result Offset
-        n_srch_rslt_offset = 0
-        
-        #Var for Retrieve More Search Results
-        b_retr_more_srch_rslts = True
-
-        while b_retr_more_srch_rslts == True:
-
-            if self.check_oauth_token():
-                #Var for Header of Employee Association EndPoint Call
-                headerEPCall = {"Authorization":"Bearer " + self.oath_token}
-        
-                #Var for URI
-                employeeUri = self.base_url + "employee-association?" + search_by + "=" + search_term + "&offset=" + str(n_srch_rslt_offset) + "&limit=" + str(n_srch_rslt_limit) + "&count=true"
-        
-                #Call to Employee Association Endpoint
-                responseEmpAssoc = requests.get(employeeUri,headers=headerEPCall)
-        
-                #Check Returned Status Code
-                if responseEmpAssoc.status_code == 200:
-        
-                    #Pull X-Total-Count and X-Response-Count Values
-                    nTotalCnt: int | None = int(responseEmpAssoc.headers.get("x-total-count"))
-                    nRspnCnt: int | None = int(responseEmpAssoc.headers.get("x-response-count"))
-        
-                    #Check Total and Reponse Counts are Not Empty
-                    if nTotalCnt is not None and nTotalCnt > 0 and nRspnCnt is not None and nRspnCnt > 0:
-                        
-                        #Var for Response Data
-                        responseData = responseEmpAssoc.json()
-        
-                        for emp_assc in responseData:
-                            parsed_emp_assc = self.parse_rosetta_employee_assoc_json(emp_assc)
-                            employee_assocs.append(parsed_emp_assc)
-
-        
-                        #Increment Offset
-                        n_srch_rslt_offset += n_srch_rslt_limit
-        
-                        #Check Offset to Total Count
-                        if n_srch_rslt_offset >= nTotalCnt:
-                            b_retr_more_srch_rslts = False
-        
-                    else:
-                        b_retr_more_srch_rslts = False
-        
-                else:
-                    b_retr_more_srch_rslts = False
-        
-            else:
-                b_retr_more_srch_rslts = False
-
-                        
-        return employee_assocs
-
     
-    def get_people_by_search_term(self,search_by: PeopleSearchBy, search_term: str) -> list[RosettaPerson]:
-        #Var for Returned People List
-        people: list[RosettaPerson] = []
 
-        #Var for Search Result Limit
-        n_srch_rslt_limit = 200
-
-        #Var for Search Result Offset
-        n_srch_rslt_offset = 0
-
-        #Var for Retrieve More Search Results
-        b_retr_more_srch_rslts = True
-
-        while b_retr_more_srch_rslts == True:
-            if self.check_oauth_token():
-                #Var for Header of People EndPoint Call
-                headerEPCall = {"Authorization":"Bearer " + self.oath_token}
-
-                #Var for URI
-                peopleUri = self.base_url + "people?" + search_by + "=" + search_term + "&offset=" + str(n_srch_rslt_offset) + "&limit=" + str(n_srch_rslt_limit) + "&count=true"
-
-                #Call to People Endpoint
-                responsePeople = requests.get(peopleUri,headers=headerEPCall)
-
-                #Check Returned Status Code
-                if responsePeople.status_code == 200:
-
-                    #Pull X-Total-Count and X-Response-Count Values
-                    nTotalCnt: int | None = int(responsePeople.headers.get("x-total-count"))
-                    nRspnCnt: int | None = int(responsePeople.headers.get("x-response-count"))
-
-                    #Check Total and Reponse Counts are Not Empty
-                    if nTotalCnt is not None and nTotalCnt > 0 and nRspnCnt is not None and nRspnCnt > 0:
-                        #Var for Response Data
-                        responseData = responsePeople.json()
-
-                        for person in responseData:
-                            parsed_person = self.parse_rosetta_person_json(person)
-                            people.append(parsed_person)
-
-                        #Increment Offset
-                        n_srch_rslt_offset += n_srch_rslt_limit
-
-                        #Check Offset to Total Count
-                        if n_srch_rslt_offset >= nTotalCnt:
-                            b_retr_more_srch_rslts = False
-
-                    else:
-                        b_retr_more_srch_rslts = False
-
-                else:
-                    b_retr_more_srch_rslts = False
-
-            else:
-                b_retr_more_srch_rslts = False
-                
-
-        return people
-
-
-    def post_mass_people_lookup(self,lookup_by: PeoplePostLookupBy,setMPL: set) -> list[RosettaPerson]:
-
-        #Var for Returned People List
-        people: list[RosettaPerson] = []
-
-        #Var for Mass People Lookup Data
-        mpl_data = {}
-
-        #Dynamically Add Properties
-        mpl_data["limit"] = 0
-        mpl_data[lookup_by] = []
-
-        #Load MPL Lookup ID Array
-        for mpl_id in setMPL:
-            mpl_data[lookup_by].append(mpl_id)
-
-        #Set Limit (Adding Extra Just in Case)
-        mpl_data["limit"] = len(mpl_data[lookup_by]) + 10
-
-        if self.check_oauth_token():
-
-            #Var for Header of People EndPoint Call
-            headerEPCall = {"Authorization":"Bearer " + self.oath_token}
-
-            #Var for URI
-            peopleUri = self.base_url + "people"
-
-            #Make Post API Call
-            responsePeople = requests.post(peopleUri,json=mpl_data,headers=headerEPCall)
-        
-            #Check Returned Status Code
-            if responsePeople.status_code == 200:
-
-                #Var for Response Data
-                responseData = responsePeople.json()
-                
-                for person in responseData:
-                    parsed_person = self.parse_rosetta_person_json(person)
-                    people.append(parsed_person)
-
-
-        return people
-
+    ############################################
+    # Display Functions
+    ############################################
 
     def display_rosetta_person_info(self,rosetta_peep: RosettaPerson):
 
