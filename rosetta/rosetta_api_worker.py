@@ -131,12 +131,42 @@ class RosettaAPIWorker:
                 #Var for Response Data
                 responseData = responseDepartments.json()
                         
-                # for person in responseData:
-                #     parsed_person = self.parse_rosetta_person_json(person)
-                #     people.append(parsed_person)
+                for ucd_dept in responseData:
+                    parsed_dept = self.parse_rosetta_department_json(ucd_dept)
+                    departments.append(parsed_dept)
 
 
         return departments
+
+
+    def get_job_type_ids(self) -> list[RosettaJobTypeID]:
+
+        #Var for Returned Job Type ID List
+        ucd_jtids: list[RosettaJobTypeID] = []
+
+        if self.check_oauth_token():
+                
+            #Var for Header for EndPoint Call
+            headerEPCall = {"Authorization":"Bearer " + self.oath_token}
+        
+            #Var for URI
+            jtidsUri = self.base_url + "employee-association/jobtypeids"
+        
+            #Make Get API Call
+            responseJTIDs = requests.get(jtidsUri,headers=headerEPCall)
+                
+            #Check Returned Status Code
+            if responseJTIDs.status_code == 200:
+        
+                #Var for Response Data
+                responseData = responseJTIDs.json()
+                        
+                for ucd_jtid in responseData:
+                    parsed_jtid = self.parse_rosetta_job_type_id_json(ucd_jtid)
+                    ucd_jtids.append(parsed_jtid)
+
+
+        return ucd_jtids
     
 
     def get_student_associations_by_search_term(self,search_by: StudentSearchBy, search_term: str) -> list[RosettaStudentAssociation]:
@@ -371,9 +401,80 @@ class RosettaAPIWorker:
 
         return people
 
+
     #################################
     # Parsing Rosetta Json Functions
     #################################
+
+    def parse_rosetta_job_type_id_json(self,ucdjtid) -> RosettaJobTypeID:
+
+        #Initialize Job Type ID to Return
+        rosetta_jtid = RosettaJobTypeID()
+
+        #Retrieve Job Type ID
+        if ucdjtid.get("job_type_id") is not None:
+            rosetta_jtid.job_type_id = ucdjtid["job_type_id"]
+
+        #Retrieve Job Type Description 
+        if ucdjtid.get("job_type_description") is not None:
+            rosetta_jtid.job_type_description = ucdjtid["job_type_description"]
+
+
+        return rosetta_jtid
+    
+
+    def parse_rosetta_department_json(self,ucddept) -> RosettaDepartment:
+
+        #Initialize Department to Return
+        rosetta_dept = RosettaDepartment()
+
+        #Retrieve Department ID
+        if ucddept.get("department_id") is not None:
+            rosetta_dept.department_id = ucddept["department_id"]
+
+        #Retrieve Department Title
+        if ucddept.get("department_title") is not None:
+            rosetta_dept.department_title = ucddept["department_title"]
+
+        #Retrieve Department Short Title
+        if ucddept.get("department_short_title") is not None:
+            rosetta_dept.department_short_title = ucddept["department_short_title"]
+
+        #Retrieve Sub Division ID
+        if ucddept.get("subdivision_id") is not None:
+            rosetta_dept.subdivision_id = ucddept["subdivision_id"]
+
+        #Retrieve Sub Division Title
+        if ucddept.get("subdivision_title") is not None:
+            rosetta_dept.subdivision_title = ucddept["subdivision_title"]
+
+        #Retrieve Sub Division L4 ID
+        if ucddept.get("subdivision_l4_id") is not None:
+            rosetta_dept.subdivision_l4_id = ucddept["subdivision_l4_id"]
+
+        #Retrieve Sub Division L4 Title
+        if ucddept.get("subdivision_l4_title") is not None:
+            rosetta_dept.subdivision_l4_title = ucddept["subdivision_l4_title"]
+
+        #Retrieve Division ID
+        if ucddept.get("division_id") is not None:
+            rosetta_dept.division_id = ucddept["division_id"]
+
+        #Retrieve Division Title
+        if ucddept.get("division_title") is not None:
+            rosetta_dept.division_title = ucddept["division_title"]
+
+        #Retrieve Organization ID
+        if ucddept.get("organization_id") is not None:
+            rosetta_dept.organization_id = ucddept["organization_id"]
+
+        #Retrieve Organization Title
+        if ucddept.get("organization_title") is not None:
+            rosetta_dept.organization_title = ucddept["organization_title"]
+
+
+        return rosetta_dept
+    
 
     def parse_rosetta_student_assoc_json(self,stdntassoc) -> RosettaStudentAssociation:
 
@@ -917,4 +1018,16 @@ class RosettaAPIWorker:
         for property_name, value in stdnt_assoc.__dict__.items():
                     print(f"{property_name}: {value}")
 
+        print(" ")
+
+    def display_rosetta_department_info(self,rosetta_dept: RosettaDepartment):
+        for property_name, value in rosetta_dept.__dict__.items():
+            print(f"{property_name}: {value}")
+        
+        print(" ")
+
+    def display_rosetta_job_type_id_info(self,rosetta_job_type_id: RosettaJobTypeID):
+        for property_name, value in rosetta_job_type_id.__dict__.items():
+                    print(f"{property_name}: {value}")
+                
         print(" ")
