@@ -42,6 +42,7 @@ class RosettaAPIWorker:
         EMPLOYEEID = "employeeid"
         STUDENTID = "studentid"
         MAILID = "mailid"
+        MAILIDALLSTATE = "affiliationState=all&mailid"
         DEPARTMENT = "department"
 
     class EmployeeSearchBy(StrEnum):
