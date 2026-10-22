@@ -31,6 +31,7 @@ class RosettaAPIWorker:
         self.client_secret = client_secret
         self.oath_token = ""
         self.expires_in = datetime.now() + timedelta(hours=-1)
+        self.error_count = 0
 
     class PeopleSearchBy(StrEnum):
         IAMID = "iamid"
@@ -102,9 +103,11 @@ class RosettaAPIWorker:
                     self.expires_in = datetime.now() + timedelta(seconds=responseData['expires_in'])
                 else:
                     b_token_status = False
+                    self.error_count += 1
 
             else:
                 b_token_status = False
+                self.error_count += 1
                 
 
         return b_token_status
@@ -136,6 +139,9 @@ class RosettaAPIWorker:
                     parsed_dept = self.parse_rosetta_department_json(ucd_dept)
                     departments.append(parsed_dept)
 
+            else:
+                self.error_count += 1
+
 
         return departments
 
@@ -166,6 +172,9 @@ class RosettaAPIWorker:
                     parsed_jtid = self.parse_rosetta_job_type_id_json(ucd_jtid)
                     ucd_jtids.append(parsed_jtid)
 
+            else:
+                self.error_count += 1
+
 
         return ucd_jtids
     
@@ -176,7 +185,7 @@ class RosettaAPIWorker:
         student_assocs: list[RosettaStudentAssociation] = []
 
         #Var for Search Result Limit
-        n_srch_rslt_limit = 200
+        n_srch_rslt_limit = 400
                 
         #Var for Search Result Offset
         n_srch_rslt_offset = 0
@@ -227,9 +236,11 @@ class RosettaAPIWorker:
                 
                 else:
                     b_retr_more_srch_rslts = False
+                    self.error_count += 1
                 
             else:
                 b_retr_more_srch_rslts = False
+                self.error_count += 1
 
 
         return student_assocs
@@ -241,7 +252,7 @@ class RosettaAPIWorker:
         employee_assocs: list[RosettaEmployeeAssociation] = []
 
         #Var for Search Result Limit
-        n_srch_rslt_limit = 200
+        n_srch_rslt_limit = 400
         
         #Var for Search Result Offset
         n_srch_rslt_offset = 0
@@ -291,9 +302,11 @@ class RosettaAPIWorker:
         
                 else:
                     b_retr_more_srch_rslts = False
+                    self.error_count += 1
         
             else:
                 b_retr_more_srch_rslts = False
+                self.error_count += 1
 
                         
         return employee_assocs
@@ -304,7 +317,7 @@ class RosettaAPIWorker:
         people: list[RosettaPerson] = []
 
         #Var for Search Result Limit
-        n_srch_rslt_limit = 200
+        n_srch_rslt_limit = 400
 
         #Var for Search Result Offset
         n_srch_rslt_offset = 0
@@ -351,9 +364,11 @@ class RosettaAPIWorker:
 
                 else:
                     b_retr_more_srch_rslts = False
+                    self.error_count += 1
 
             else:
                 b_retr_more_srch_rslts = False
+                self.error_count += 1
                 
 
         return people
@@ -399,6 +414,11 @@ class RosettaAPIWorker:
                     parsed_person = self.parse_rosetta_person_json(person)
                     people.append(parsed_person)
 
+            else:
+                self.error_count += 1
+
+        else:
+            self.error_count += 1
 
         return people
 
