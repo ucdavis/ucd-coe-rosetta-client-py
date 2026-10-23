@@ -18,27 +18,24 @@ def main():
                                         os.getenv("ROSETTA_CLIENT_ID"),
                                         os.getenv("ROSETTA_CLIENT_SECRET"))
 
+    # List for Returned List of Rosetta People
+    l_people: list[RosettaPerson] = []
+
+    #Set for Unique IDs for Post People Lookup
+    s_mpl_ids = set()
+
+    # Demo Data
+    # "1000550201,1000016201,1000438403,1000227051"
+    # "1000010578,1000438054,1000269748,1000004984"
+    # "1000505549,1000213158,1000572411,1000632980"
+    # "1000090068,1000054150,1000008378,1000326424"
+    
     ############################
     # People Get EndPoint Query
     ############################
 
     #Pull People by Search Term
-    lpeople: list[RosettaPerson] = rosetta_api_wrkr.get_people_by_search_term(rosetta_api_wrkr.PeopleSearchBy.IAMIDS,"1000550201,1000016201,1000438403,1000227051")
-
-    # "1000550201,1000016201,1000438403,1000227051"
-    # "1000010578,1000438054,1000269748,1000004984"
-    # "1000505549,1000213158,1000572411,1000632980"
-    # "1000090068,1000054150,1000008378,1000326424"
-
-    #Display People API Query Results
-    for upeep in sorted(lpeople, key=lambda x: x.display_name):
-        rosetta_api_wrkr.display_rosetta_person_info(upeep)
-
-
-    ###################################################
-    #Set for Unique IDs for Post People Lookup
-    s_mpl_ids = set()
-    ###################################################
+    l_people = rosetta_api_wrkr.get_people_by_search_term(rosetta_api_wrkr.PeopleSearchBy.IAMIDS,"1000550201,1000016201,1000438403,1000227051")
 
     #######################################
     # Employee Associations Endpoint Query
@@ -55,8 +52,7 @@ def main():
 
         #Display Employee Association Info
         rosetta_api_wrkr.display_rosetta_employee_association_info(uemp_assoc)
-
-        
+  
     #For Readability
     print(" ")
 
@@ -76,11 +72,9 @@ def main():
         #Display Student Association Info
         rosetta_api_wrkr.display_rosetta_student_association_info(ustdnt_assoc)
 
-
     #For Readability
     print(" ")
 
-  
     #######################################
     # People Lookup by Post Query
     #######################################
@@ -89,15 +83,14 @@ def main():
     if len(s_mpl_ids) > 0:
 
         #Pull List of Rosetta People by Post Lookup
-        l_people: list[RosettaPerson] = rosetta_api_wrkr.post_mass_people_lookup(rosetta_api_wrkr.PeoplePostLookupBy.IAMIDS,s_mpl_ids)
+        l_people = rosetta_api_wrkr.post_mass_people_lookup(rosetta_api_wrkr.PeoplePostLookupBy.IAMIDS,s_mpl_ids)
 
-        #Sort List by Display Name
-        l_people.sort(key=lambda x: x.display_name)
+    #######################################
+    # Display List of Rosetta People
+    #######################################
 
-        #Display Returned UCD People
-        for ucd_peep in l_people:
-            rosetta_api_wrkr.display_rosetta_person_info(ucd_peep)
-
+    for upeep in sorted(l_people, key=lambda x: x.display_name):
+        rosetta_api_wrkr.display_rosetta_person_info(upeep)
 
     #For Readability
     print(" ")
@@ -112,7 +105,6 @@ def main():
     #Display Department Information
     for u_dept in l_departments:
         rosetta_api_wrkr.display_rosetta_department_info(u_dept)
-
 
     #For Readability
     print(" ")
