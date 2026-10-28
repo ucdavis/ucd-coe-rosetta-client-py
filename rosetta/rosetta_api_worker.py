@@ -42,6 +42,7 @@ class RosettaAPIWorker:
         EMAIL = "email"
         EMPLOYEEID = "employeeid"
         STUDENTID = "studentid"
+        PIDM = "pidm"
         MAILID = "mailid"
         MAILIDALLSTATE = "affiliationState=all&mailid"
         DEPARTMENT = "department"
