@@ -25,3 +25,53 @@ ROSETTA_OAUTH_URL=https://obtain-from-the-identity-team.io/token
 ROSETTA_TEST_ID=member-iam-id-to-test-with
 
 ```
+
+### Script Argument Options
+
+- people-iamid \<iamid\>
+- people-iamids \<iamid\>
+- people-iamids-all-state \<iamids\>
+- people-login \<userid\>
+- people-login-all-state \<userid\>
+- people-email \<emailaddress\>
+- people-employeeid \<employeeid\>
+- people-studentid \<studentid\>
+- people-pidm \<pidm\>
+- people-mailid \<mailid\>
+- people-mailid-all-state \<mailid\>
+- people-department \<departmentcode\>
+- employee-iamid \<iamid\>
+- employee-departmentid \<departmentid\>
+- employee-divisionid \<divisionid\>
+- employee-subdivisionid \<subdivisionid\>
+- employee-subdivisionl4id \<subdivisionl4id\>
+- student-iam \<iamid\>
+- student-pidm \<pidm\>
+- student-studentid \<studentid\>
+- student-majorcode \<majorcode\>
+- student-collegecode \<collegecode\>
+- departments show
+- jobtypeids show
+
+### Script Examples
+
+Get Members by IAM IDs
+```bash
+python3 ./main.py people-iamids "1000550201,1000016201,1000438403,1000227051"
+```
+Get Member by Login
+```bash
+python3 ./main.py people-login dbunn
+```
+Get Member by Email Address
+```bash
+python3 ./main.py people-email dbunn@ucdavis.edu
+```
+Get All Members in a Department
+```bash
+python3 ./main.py people-department 024000
+```
+Get Employee Associations by Department
+```bash
+python3 ./main.py employee-departmentid 024000
+```
