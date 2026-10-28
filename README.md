@@ -1,6 +1,8 @@
 ## Rosetta API Client Example
 
-A quick repository demonstrating how to access the UCD Rosetta API. Please contact the Campus Identity team to obtain the required credentials for your API account.
+A simple repository demonstrating how to access the UCD Rosetta API. You can integrate the Rosetta package into another project or use this repository as a standalone client.
+
+To obtain the API credentials required for authentication, please contact the Campus Identity team.
 
 ### Resource Links
 
@@ -24,6 +26,29 @@ ROSETTA_OAUTH_URL=https://obtain-from-the-identity-team.io/token
 # Rosetta Test IAM ID
 ROSETTA_TEST_ID=member-iam-id-to-test-with
 
+```
+
+### Script Usage Examples
+
+Get Members by IAM IDs
+```bash
+python3 ./main.py people-iamids "1000550201,1000016201,1000438403,1000227051"
+```
+Get Member by Login
+```bash
+python3 ./main.py people-login dbunn
+```
+Get Member by Email Address
+```bash
+python3 ./main.py people-email dbunn@ucdavis.edu
+```
+Get All Members in a Department
+```bash
+python3 ./main.py people-department 024000
+```
+Get Employee Associations by Department
+```bash
+python3 ./main.py employee-departmentid 024000
 ```
 
 ### Script Argument Options
@@ -52,26 +77,3 @@ ROSETTA_TEST_ID=member-iam-id-to-test-with
 - student-collegecode \<collegecode\>
 - departments show
 - jobtypeids show
-
-### Script Examples
-
-Get Members by IAM IDs
-```bash
-python3 ./main.py people-iamids "1000550201,1000016201,1000438403,1000227051"
-```
-Get Member by Login
-```bash
-python3 ./main.py people-login dbunn
-```
-Get Member by Email Address
-```bash
-python3 ./main.py people-email dbunn@ucdavis.edu
-```
-Get All Members in a Department
-```bash
-python3 ./main.py people-department 024000
-```
-Get Employee Associations by Department
-```bash
-python3 ./main.py employee-departmentid 024000
-```
