@@ -1,4 +1,4 @@
-## Rosetta API Client Example
+## UCD COE Rosetta Client for Python
 
 A simple repository demonstrating how to access the UCD Rosetta API. You can integrate the Rosetta package into another project or use this repository as a standalone client.
 
