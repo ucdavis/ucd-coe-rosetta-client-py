@@ -54,8 +54,8 @@ python3 ./main.py employee-departmentid 024000
 ### Script Argument Options
 
 - people-iamid \<iamid\>
-- people-iamids \<iamid\>
-- people-iamids-all-state \<iamids\>
+- people-iamids \<iamid,iamid,iamid\>
+- people-iamids-all-state \<iamid,iamid,iamid\>
 - people-login \<userid\>
 - people-login-all-state \<userid\>
 - people-email \<emailaddress\>
