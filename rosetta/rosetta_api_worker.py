@@ -606,9 +606,9 @@ class RosettaAPIWorker:
         if empassoc.get("hire_date") is not None:
             rosetta_emp_assoc.hire_date = empassoc["hire_date"]
 
-        #Retrieve Start Date
-        if empassoc.get("start_date") is not None:
-            rosetta_emp_assoc.start_date = empassoc["start_date"]
+        #Retrieve Position Entry Date
+        if empassoc.get("position_entry_date") is not None:
+            rosetta_emp_assoc.position_entry_date = empassoc["position_entry_date"]
 
         #Retrieve FTE Percentage
         if empassoc.get("fte_percentage") is not None:
@@ -686,15 +686,7 @@ class RosettaAPIWorker:
         if empassoc.get("is_campus_position") is not None:
             rosetta_emp_assoc.is_campus_position = empassoc["is_campus_position"]
 
-        #Retrieve Modified Date
-        if empassoc.get("modified_date") is not None:
-            rosetta_emp_assoc.modified_date = empassoc["modified_date"]
-
-        #Retrieve Create Date
-        if empassoc.get("create_date") is not None:
-            rosetta_emp_assoc.create_date = empassoc["create_date"]
-
-
+    
         return rosetta_emp_assoc
 
 
@@ -709,6 +701,14 @@ class RosettaAPIWorker:
         #Retrieve IAM ID
         if person.get("iam_id") is not None:
             rosetta_person.iam_id = person["iam_id"]
+
+        #Retrieve Create Date
+        if person.get("create_date") is not None:
+            rosetta_person.create_date = person["create_date"]
+
+        #Retrieve Modified Date
+        if person.get("modified_date") is not None:
+            rosetta_person.modified_date = person["modified_date"]
         
         #Retrieve IDs
         if person.get("id") is not None:

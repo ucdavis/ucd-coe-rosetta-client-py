@@ -46,6 +46,8 @@ class RosettaPerson:
         self.employment_is_manager = False
         self.employment_is_campus_employee = False
         self.employment_is_health_employee = False
+        self.create_date = ""
+        self.modified_date = ""
         self.student_associations: list[RosettaStudentAssociation] = []
         self.employee_associations: list[RosettaEmployeeAssociation] = []
 

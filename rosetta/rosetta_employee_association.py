@@ -14,7 +14,7 @@ class RosettaEmployeeAssociation:
         self.employee_classification_description = ""
         self.status = ""
         self.hire_date = ""
-        self.start_date = ""
+        self.position_entry_date = ""
         self.fte_percentage = ""
         self.job_type_id = ""
         self.job_type_description = ""
@@ -36,6 +36,5 @@ class RosettaEmployeeAssociation:
         self.reports_to_employee_id = ""
         self.is_health_position = ""
         self.is_campus_position = ""
-        self.modified_date = ""
-        self.create_date = ""
 
+        

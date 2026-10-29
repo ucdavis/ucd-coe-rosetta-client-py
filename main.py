@@ -131,6 +131,9 @@ def main():
 
     if len(l_employee_assocs) > 0:
 
+        #For Readability
+        print(" ")
+
         for uemp_assoc in l_employee_assocs:
 
             #Add Employee's IAM to MPL IDs Set for People Post Lookup 
@@ -147,6 +150,9 @@ def main():
     #######################################
 
     if len(l_student_assocs) > 0:
+
+        #For Readability
+        print(" ")
 
         #Display Student Associations API Query Results
         for ustdnt_assoc in l_student_assocs:
