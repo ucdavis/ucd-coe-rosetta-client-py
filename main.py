@@ -38,7 +38,6 @@ def main():
     #Set for Unique IDs for Post People Lookup
     s_mpl_ids = set()
 
-
     #Check for Supplied Script Arguments
     if len(sys.argv) == 3:
         
@@ -92,6 +91,14 @@ def main():
             case "jobtypeids":
                 l_jtids = rosetta_api_wrkr.get_job_type_ids()
 
+
+        #Keeping Track of Number of Errors in Error Count Property on API Worker Instance. 
+        #Leaving Resetting of Error Count Up to the Developer and They Want It to Work
+        #Display Number of Errors if Any Occurred
+        if rosetta_api_wrkr.error_count > 0:
+            print(str(rosetta_api_wrkr.error_count) + " error(s) occurred during API calls")
+
+        
     else: 
         print(" ")
         print("Argument Options:")
