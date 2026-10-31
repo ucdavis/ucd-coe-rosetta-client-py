@@ -25,7 +25,8 @@ class RosettaAPIWorker:
         if not isinstance(client_secret, str) or not client_secret.strip():
                     raise ValueError("Client Secret is missing")
 
-        self.base_url = base_url
+
+        self.base_url = base_url.strip().rstrip("/") + "/" #Ensure Base URL Ends with a Forward Slash
         self.token_url = token_url
         self.client_id = client_id
         self.client_secret = client_secret

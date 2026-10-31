@@ -8,6 +8,13 @@ To obtain the API credentials required for authentication, please contact the Ca
 
 - [Rosetta - UC Davis IAM API](https://anypoint.mulesoft.com/exchange/portals/university-of-california-346/9b04bfa8-6eeb-4d85-b676-91db930f8411/iam-rosetta-api/minor/1.0/pages/home/)
 
+## Requirements
+
+- Python 3.10 or newer
+- python-dotenv
+- requests
+
+
 ### Example of .env file
 
 ```bash
@@ -23,8 +30,6 @@ ROSETTA_BASE_URL=https://obtain-from-the-identity-team.io/api/v1/
 # Rosetta OAuth URL
 ROSETTA_OAUTH_URL=https://obtain-from-the-identity-team.io/token
 
-# Rosetta Test IAM ID
-ROSETTA_TEST_ID=member-iam-id-to-test-with
 
 ```
 

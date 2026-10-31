@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ucd-coe-rosetta-py"
+version = "1.0.0"
+requires-python = ">=3.10"
+dependencies = [
+    "python-dotenv>=1.0.1",
+    "requests>=2.32.5"
+]
+
+authors = [
+
+    { name = "Ben Clark", email = "benclark@ucdavis.edu" },
+    { name = "Dean Bunn", email = "dbunn@ucdavis.edu" },
+    { name = "Reuben Castelino", email = "rtcastelino@ucdavis.edu" },
+    { name = "Wilson Miller", email = "wamiller@ucdavis.edu" }
+]
