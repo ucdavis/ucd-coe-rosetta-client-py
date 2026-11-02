@@ -16,5 +16,6 @@ authors = [
     { name = "Ben Clark", email = "benclark@ucdavis.edu" },
     { name = "Dean Bunn", email = "dbunn@ucdavis.edu" },
     { name = "Reuben Castelino", email = "rtcastelino@ucdavis.edu" },
+    { name = "Steve Pigg", email = "sapigg@ucdavis.edu" },
     { name = "Wilson Miller", email = "wamiller@ucdavis.edu" }
 ]
