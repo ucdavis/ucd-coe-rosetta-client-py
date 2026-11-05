@@ -5,7 +5,7 @@ import sys
 from datetime import datetime, timedelta
 
 #Import Rosetta Classes
-from rosetta import RosettaAPIWorker, RosettaPerson, RosettaEmployeeAssociation, RosettaStudentAssociation, RosettaDepartment, RosettaJobTypeID
+from rosetta import RosettaAPIWorker, RosettaPerson, RosettaIdentity, RosettaEmployeeAssociation, RosettaStudentAssociation, RosettaDepartment, RosettaJobTypeID
 
 
 def main():
@@ -22,6 +22,9 @@ def main():
 
     #List for Returned List of Rosetta People
     l_people: list[RosettaPerson] = []
+
+    #List for Returned List of Rosetta Identities
+    l_identities: list[RosettaIdentity] = []
 
     #List for Returned List of Employee Associations
     l_employee_assocs: list[RosettaEmployeeAssociation] = []
@@ -66,6 +69,16 @@ def main():
                 l_people = rosetta_api_wrkr.get_people_by_search_term(rosetta_api_wrkr.PeopleSearchBy.MAILIDALLSTATE,sys.argv[2])
             case "people-department":
                 l_people = rosetta_api_wrkr.get_people_by_search_term(rosetta_api_wrkr.PeopleSearchBy.DEPARTMENT,sys.argv[2])
+            case "identity-iamid":
+                l_identities = rosetta_api_wrkr.get_identities_by_search_term(rosetta_api_wrkr.IdentitySearchBy.IAMID,sys.argv[2])
+            case "identity-login":
+                l_identities = rosetta_api_wrkr.get_identities_by_search_term(rosetta_api_wrkr.IdentitySearchBy.LOGINID,sys.argv[2])
+            case "identity-employeeid":
+                l_identities = rosetta_api_wrkr.get_identities_by_search_term(rosetta_api_wrkr.IdentitySearchBy.EMPLOYEEID,sys.argv[2])
+            case "identity-email":
+                l_identities = rosetta_api_wrkr.get_identities_by_search_term(rosetta_api_wrkr.IdentitySearchBy.EMAIL,sys.argv[2])
+            case "identity-departmentid":
+                l_identities = rosetta_api_wrkr.get_identities_by_search_term(rosetta_api_wrkr.IdentitySearchBy.DEPARTMENTID,sys.argv[2])
             case "employee-iamid":
                 l_employee_assocs = rosetta_api_wrkr.get_employee_associations_by_search_term(rosetta_api_wrkr.EmployeeSearchBy.IAMID,sys.argv[2])
             case "employee-departmentid":
@@ -115,6 +128,11 @@ def main():
         print("people-mailid <mailid>")
         print("people-mailid-all-state <mailid>")
         print("people-department <departmentcode>")
+        print("identity-iamid <iamid>")
+        print("identity-login <userid>")
+        print("identity-employeeid <employeeid>")
+        print("identity-email <emailaddress>")
+        print("identity-departmentid <departmentid>")
         print("employee-iamid <iamid>")
         print("employee-departmentid <departmentid>")
         print("employee-divisionid <divisionid>")
@@ -195,6 +213,21 @@ def main():
         #For Readability
         print(" ")
 
+    #######################################
+    # Display Identities
+    #######################################
+    
+    if len(l_identities) > 0:
+
+        #For Readability
+        print(" ")
+
+        for uidentity in sorted(l_identities, key=lambda x: x.display_name):
+            rosetta_api_wrkr.display_rosetta_identity_info(uidentity)
+
+        #For Readability
+        print(" ")
+    
     ########################################
     # Display Departments 
     ########################################

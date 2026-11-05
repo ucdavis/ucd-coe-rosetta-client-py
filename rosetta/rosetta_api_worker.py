@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from enum import StrEnum
 
 from .rosetta_person import RosettaPerson
+from .rosetta_identity import RosettaIdentity
 from .rosetta_employee_association import RosettaEmployeeAssociation
 from .rosetta_student_association import RosettaStudentAssociation
 from .rosetta_department import RosettaDepartment
@@ -72,6 +73,21 @@ class RosettaAPIWorker:
         PIDMS = "pidms"
         MOTHRAIDS = "mothraids"
 
+    class IdentitySearchBy(StrEnum):
+        IAMID = "iamid"
+        LOGINID = "loginid"
+        EMPLOYEEID = "employeeid"
+        MOTHRAID = "mothraid"
+        EMAIL = "email"
+        DEPARTMENTID = "departmentid"
+
+    class IdentityPostLookupBy(StrEnum):
+        IAMIDS = "iamids"
+        EMAILS = "emails"
+        LOGINIDS = "loginids"
+        EMPLOYEEIDS = "employeeids"
+        MOTHRAIDS = "mothraids"
+        
 
     ############################################
     # Rosetta API Call Functions
@@ -425,9 +441,159 @@ class RosettaAPIWorker:
         return people
 
 
+    def get_identities_by_search_term(self,search_by: IdentitySearchBy, search_term: str) -> list[RosettaIdentity]:
+        #Var for Returned Identities List
+        identities: list[RosettaIdentity] = []
+
+        if self.check_oauth_token():
+            #Var for Header of Identities EndPoint Call
+            headerEPCall = {"Authorization":"Bearer " + self.oath_token}
+
+            #Var for URI
+            identityUri = self.base_url + "identity?" + search_by + "=" + search_term 
+
+            #Call to Identity Endpoint
+            responseIdentity = requests.get(identityUri,headers=headerEPCall)
+
+            #Check Returned Status Code
+            if responseIdentity.status_code == 200:
+
+                #Var for Response Data
+                responseData = responseIdentity.json()
+
+                for identity in responseData:
+                    parsed_identity = self.parse_rosetta_identity_json(identity)
+                    identities.append(parsed_identity)
+                       
+                    
+            else:
+                self.error_count += 1
+
+        else:
+            self.error_count += 1
+
+
+        return identities
+
+
+    def post_mass_identities_lookup(self,lookup_by: IdentityPostLookupBy,setMIL: set) -> list[RosettaIdentity]:
+
+        #Var for Returned Identities List
+        identities: list[RosettaIdentity] = []
+
+        #Var for Mass Identities Lookup Data
+        mil_data = {}
+        mil_data[lookup_by] = []
+
+        #Load MIL Lookup ID Array
+        for mil_id in setMIL:
+            mil_data[lookup_by].append(mil_id)
+
+        if self.check_oauth_token():
+
+            #Var for Header of People EndPoint Call
+            headerEPCall = {"Authorization":"Bearer " + self.oath_token}
+
+            #Var for URI
+            identityUri = self.base_url + "identity"
+
+            #Make Post API Call
+            responseIdentity = requests.post(identityUri,json=mil_data,headers=headerEPCall)
+        
+            #Check Returned Status Code
+            if responseIdentity.status_code == 200:
+
+                #Var for Response Data
+                responseData = responseIdentity.json()
+                
+                for uidentity in responseData:
+                    parsed_identity = self.parse_rosetta_identity_json(uidentity)
+                    identities.append(parsed_identity)
+
+            else:
+                self.error_count += 1
+
+        else:
+            self.error_count += 1
+
+
+        return identities
+
     #################################
     # Parsing Rosetta Json Functions
     #################################
+
+    def parse_rosetta_identity_json(self,ucdidentity) -> RosettaIdentity:
+
+        #Initialize Identity to Return
+        rosetta_identity = RosettaIdentity()
+
+        #Retrieve IAM ID 
+        if ucdidentity.get("iam_id") is not None:
+            rosetta_identity.iam_id = ucdidentity["iam_id"]
+
+        #Retrieve Display Name
+        if ucdidentity.get("display_name") is not None:
+            rosetta_identity.display_name = ucdidentity["display_name"]
+
+        #Retrieve Campus Email
+        if ucdidentity.get("campus_email") is not None:
+            rosetta_identity.campus_email = ucdidentity["campus_email"]
+
+        #Retrieve Login ID
+        if ucdidentity.get("login_id") is not None:
+            rosetta_identity.login_id = ucdidentity["login_id"]
+
+        #Retrieve Employee ID
+        if ucdidentity.get("employee_id") is not None:
+            rosetta_identity.employee_id = ucdidentity["employee_id"]
+
+        #Retrieve Student ID
+        if ucdidentity.get("student_id") is not None:
+            rosetta_identity.student_id = ucdidentity["student_id"]
+        
+        #Retrieve Mothra ID
+        if ucdidentity.get("mothra_id") is not None:
+            rosetta_identity.mothra_id = ucdidentity["mothra_id"]
+
+        #Retrieve UCNET ID
+        if ucdidentity.get("ucnet_id") is not None:
+            rosetta_identity.ucnet_id = ucdidentity["ucnet_id"]
+
+        #Retrieve PIDM ID
+        if ucdidentity.get("pidm") is not None:
+            rosetta_identity.pidm = ucdidentity["pidm"]
+
+        #Retrieve Cosmos ID
+        if ucdidentity.get("cosmos_id") is not None:
+            rosetta_identity.cosmos_id = ucdidentity["cosmos_id"]
+
+        #Retrieve CPE ID
+        if ucdidentity.get("cpe_id") is not None:
+            rosetta_identity.cpe_id = ucdidentity["cpe_id"]
+
+        #Retrieve Health Affiliate ID
+        if ucdidentity.get("health_affiliate_id") is not None:
+            rosetta_identity.health_affiliate_id = ucdidentity["health_affiliate_id"]
+
+        #Retrieve UCANR ID
+        if ucdidentity.get("ucanr_id") is not None:
+            rosetta_identity.ucanr_id = ucdidentity["ucanr_id"]
+
+        #Retrieve USDA WHNRC ID
+        if ucdidentity.get("usda_whnrc_id") is not None:
+            rosetta_identity.usda_whnrc_id = ucdidentity["usda_whnrc_id"]
+
+        #Retrieve Affiliate ID
+        if ucdidentity.get("affiliate_id") is not None:
+            rosetta_identity.affiliate_id = ucdidentity["affiliate_id"]
+
+        #Retrieve Department ID
+        if ucdidentity.get("department_id") is not None:
+            rosetta_identity.department_id = ucdidentity["department_id"]
+
+
+        return rosetta_identity
 
     def parse_rosetta_job_type_id_json(self,ucdjtid) -> RosettaJobTypeID:
 
@@ -1031,6 +1197,12 @@ class RosettaAPIWorker:
                 self.display_rosetta_student_association_info(stdnt_assoc)
                 
 
+    def display_rosetta_identity_info(self,rosetta_identity: RosettaIdentity):
+        for property_name, value in rosetta_identity.__dict__.items():
+            print(f"{property_name}: {value}")
+
+        print(" ")
+
     def display_rosetta_employee_association_info(self,empl_assoc: RosettaEmployeeAssociation):
         for property_name, value in empl_assoc.__dict__.items():
             print(f"{property_name}: {value}")
@@ -1039,7 +1211,7 @@ class RosettaAPIWorker:
 
     def display_rosetta_student_association_info(self,stdnt_assoc: RosettaStudentAssociation):
         for property_name, value in stdnt_assoc.__dict__.items():
-                    print(f"{property_name}: {value}")
+            print(f"{property_name}: {value}")
 
         print(" ")
 
