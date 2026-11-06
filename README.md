@@ -70,6 +70,11 @@ python3 ./main.py employee-departmentid 024000
 - people-mailid \<mailid\>
 - people-mailid-all-state \<mailid\>
 - people-department \<departmentcode\>
+- identity-iamid \<iamid\>
+- identity-login \<userid\>
+- identity-employeeid \<employeeid\>
+- identity-email \<emailaddress\>
+- identity-departmentid \<departmentid\>
 - employee-iamid \<iamid\>
 - employee-departmentid \<departmentid\>
 - employee-divisionid \<divisionid\>
