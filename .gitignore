@@ -16,3 +16,9 @@ __pycache__/
 *.env.example
 *.env.local
 *.env.staging
+
+# Test Data File
+demo-data.txt
+
+# Reporting CSVs
+*.csv 
